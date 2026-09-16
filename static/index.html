@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Amount Detection in Medical Documents | Plum SDE Assignment</title>
+  <meta name="description" content="AI-Powered Amount Detection in Medical Documents: OCR, Numeric Normalization, Context Classification, and Provenance Extraction.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-badge">
+        <span class="dot"></span> Plum SDE Intern Assignment &bull; Problem Statement 4
+      </div>
+      <h1>AI-Powered Amount Detection</h1>
+      <p class="subtitle">
+        Intelligent extraction of financial amounts from medical bills and receipts with OCR error correction, surrounding context classification, mathematical validation, and provenance tracking.
+      </p>
+    </header>
+
+    <main class="layout-grid">
+      <!-- Input Panel -->
+      <section class="glass-panel">
+        <div class="panel-header">
+          <h2>Input Document</h2>
+          <a href="/docs" target="_blank" style="color: #818cf8; font-size: 0.85rem; text-decoration: none; font-weight: 600;">Swagger Docs &rarr;</a>
+        </div>
+
+        <!-- Presets -->
+        <div class="preset-bar">
+          <div class="preset-title">Test Sample Presets:</div>
+          <div class="preset-buttons">
+            <button class="preset-btn" id="preset-pdf-text">PDF Sample (Text)</button>
+            <button class="preset-btn" id="preset-pdf-ocr">PDF Sample (OCR Noise)</button>
+            <button class="preset-btn" id="preset-hospital">Hospital Bill</button>
+            <button class="preset-btn" id="preset-guardrail">Noisy Guardrail</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-container">
+          <button class="tab-btn active" id="tab-text">Typed Text</button>
+          <button class="tab-btn" id="tab-image">Receipt Image (OCR)</button>
+        </div>
+
+        <div class="input-area">
+          <!-- Text Input View -->
+          <div id="text-input-view">
+            <textarea id="bill-text" placeholder="Enter or paste medical bill text here... e.g. Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%">Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%</textarea>
+          </div>
+
+          <!-- Image Upload View -->
+          <div id="image-input-view" style="display: none;">
+            <div class="drop-zone" id="drop-zone">
+              <div class="drop-zone-icon">&#128206;</div>
+              <p><strong>Click to browse</strong> or drag & drop bill image</p>
+              <p style="font-size: 0.75rem; margin-top: 0.3rem;">Supports PNG, JPG, JPEG (scanned or photo)</p>
+              <input type="file" id="file-input" accept="image/*" style="display: none;">
+            </div>
+            <div id="file-info" class="file-preview" style="display: none;">
+              <span id="file-name" style="font-size: 0.85rem; color: #cbd5e1;"></span>
+              <button id="clear-file" style="margin-left: auto; background: none; border: none; color: #ef4444; cursor: pointer;">Remove</button>
+            </div>
+          </div>
+
+          <button class="action-btn" id="btn-process">
+            <span id="btn-spinner" style="display: none;">&#8987;</span>
+            <span id="btn-text">Execute AI Pipeline</span>
+          </button>
+        </div>
+
+        <!-- Quick Curl Snippet -->
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+          <div class="preset-title">Quick Terminal cURL Command:</div>
+          <div class="code-container">
+            <button class="copy-btn" id="copy-curl-btn">Copy</button>
+            <pre><code id="curl-snippet">curl -X POST "http://localhost:8000/api/v1/process" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%"}'</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Output Pipeline Stages -->
+      <section class="glass-panel">
+        <div class="panel-header">
+          <h2>Pipeline Stages & Provenance</h2>
+          <span id="overall-status" class="badge badge-conf">Ready</span>
+        </div>
+
+        <div class="pipeline-steps">
+          <!-- Step 1 Card -->
+          <div class="step-card" id="card-step1">
+            <div class="step-header">
+              <span class="step-title">Step 1: OCR / Text Extraction</span>
+              <span class="badge badge-conf" id="s1-badge">Confidence: --</span>
+            </div>
+            <div id="s1-content" style="font-size: 0.85rem; color: var(--text-muted);">
+              Run pipeline to extract raw numeric tokens and detect currency.
+            </div>
+          </div>
+
+          <!-- Step 2 Card -->
+          <div class="step-card" id="card-step2">
+            <div class="step-header">
+              <span class="step-title">Step 2: Numeric Normalization</span>
+              <span class="badge badge-conf" id="s2-badge">Confidence: --</span>
+            </div>
+            <div id="s2-content" style="font-size: 0.85rem; color: var(--text-muted);">
+              Corrects OCR digit errors (e.g. l200 &rarr; 1200) and filters percentages.
+            </div>
+          </div>
+
+          <!-- Step 3 Card -->
+          <div class="step-card" id="card-step3">
+            <div class="step-header">
+              <span class="step-title">Step 3: Context Classification</span>
+              <span class="badge badge-conf" id="s3-badge">Confidence: --</span>
+            </div>
+            <div id="s3-content" style="font-size: 0.85rem; color: var(--text-muted);">
+              Labels amounts into categories: total_bill, paid, due.
+            </div>
+          </div>
+
+          <!-- Step 4 Card -->
+          <div class="step-card" id="card-step4">
+            <div class="step-header">
+              <span class="step-title">Step 4: Final JSON Output & Provenance</span>
+              <span class="badge badge-conf" id="s4-badge">Status: --</span>
+            </div>
+            <div id="s4-math-container"></div>
+            <div class="code-container">
+              <button class="copy-btn" id="copy-json-btn">Copy JSON</button>
+              <pre><code id="final-json-view">/* Final structured JSON will appear here */</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Plum SDE Internship Technical Assignment &bull; Problem Statement 4 &bull; Built with FastAPI & RapidOCR
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

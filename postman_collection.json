@@ -1,0 +1,219 @@
+{
+  "info": {
+    "_postman_id": "8f3b2a9e-c852-475a-bb48-91c28fa48e77",
+    "name": "Plum SDE Assignment - Problem 4 Amount Detection",
+    "description": "Postman collection for testing the 4-step AI-Powered Amount Detection in Medical Documents pipeline.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "1. Step 1 - OCR / Text Extraction (Text)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/step1-extract",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "step1-extract"]
+        }
+      }
+    },
+    {
+      "name": "2. Step 1 - OCR Extraction (Image Upload)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "sample_data/sample_receipt_clean.png"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/step1-extract",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "step1-extract"]
+        }
+      }
+    },
+    {
+      "name": "3. Step 2 - Numeric Normalization & Digit Error Correction",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"raw_tokens\": [\"l200\", \"1000\", \"200\", \"10%\"],\n  \"currency_hint\": \"INR\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/step2-normalize",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "step2-normalize"]
+        }
+      }
+    },
+    {
+      "name": "4. Step 3 - Classification by Context",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"normalized_amounts\": [1200, 1000, 200],\n  \"text\": \"Total: INR 1200 | Paid: 1000 | Due: 200\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/step3-classify",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "step3-classify"]
+        }
+      }
+    },
+    {
+      "name": "5. Step 4 - Final Output with Provenance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amounts\": [\n    {\"type\": \"total_bill\", \"value\": 1200},\n    {\"type\": \"paid\", \"value\": 1000},\n    {\"type\": \"due\", \"value\": 200}\n  ],\n  \"currency\": \"INR\",\n  \"text\": \"Total: INR 1200 | Paid: 1000 | Due: 200\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/step4-final",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "step4-final"]
+        }
+      }
+    },
+    {
+      "name": "6. Full Pipeline - Text Processing (PDF Example 1)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "process"]
+        }
+      }
+    },
+    {
+      "name": "7. Full Pipeline - OCR Noise & Typos (PDF Example 2)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"T0tal: Rs l200 | Pald: 1000 | Due: 200\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "process"]
+        }
+      }
+    },
+    {
+      "name": "8. Full Pipeline - Guardrail Exit (Noisy / Unreadable)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\": \"### ??? [unreadable crumpled paper artifacts - no numbers here] ~~~\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "process"]
+        }
+      }
+    },
+    {
+      "name": "9. Full Pipeline - Scanned Image Upload",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "sample_data/sample_receipt_clean.png"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/process-image",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "process-image"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    }
+  ]
+}
