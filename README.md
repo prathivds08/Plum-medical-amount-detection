@@ -117,6 +117,41 @@ Combines labeled amounts, ISO currency, and textual lineage:
 
 ---
 
+## 📂 Project Structure
+
+```
+Plum-medical-amount-detection/
+├── main.py                  # FastAPI server entrypoint & route handlers
+├── models.py                # Pydantic schemas adhering to assignment requirements
+├── config.py                # Environment and pipeline configurations
+├── requirements.txt         # Production & testing dependencies
+├── pytest.ini              # Pytest configuration & warning filters
+├── curl_samples.bat         # Automated cURL test script for Windows
+├── curl_samples.sh          # Automated cURL test script for Linux/macOS
+├── postman_collection.json  # Complete Postman collection for all endpoints
+├── services/
+│   ├── __init__.py
+│   ├── pipeline.py          # Master pipeline orchestrating Steps 1 to 4
+│   ├── ocr_engine.py        # Step 1: RapidOCR & image preprocessing
+│   ├── normalizer.py        # Step 2: OCR confusion matrix & rate filtering
+│   ├── classifier.py        # Step 3: Context extraction & fuzzy keyword matching
+│   └── provenance.py        # Step 4: Lineage tracking & math consistency checks
+├── static/
+│   ├── index.html           # Interactive web UI dashboard
+│   ├── style.css            # Dark mode UI styling
+│   └── app.js               # Frontend JavaScript client
+├── sample_data/
+│   ├── generate_samples.py  # Synthetic bill/receipt generator script
+│   ├── sample_receipt_clean.png
+│   ├── sample_receipt_ocr_noise.png
+│   └── sample_unreadable.png
+└── tests/
+    ├── __init__.py
+    └── test_pipeline.py     # 17 automated tests for all steps, guardrails & APIs
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
@@ -126,8 +161,8 @@ Combines labeled amounts, ISO currency, and textual lineage:
 ### 2. Installation
 Clone the repository and install dependencies:
 ```bash
-git clone <your-repo-url>
-cd "Plum assignment"
+git clone https://github.com/prathivds08/Plum-medical-amount-detection.git
+cd Plum-medical-amount-detection
 
 # Create and activate virtual environment (optional)
 python -m venv venv
@@ -183,6 +218,19 @@ pytest -v
 - Step 4 exact source snippet provenance formatting
 - Arithmetic consistency audit (`Total == Paid + Due`)
 - End-to-end REST API integration tests for text and image multipart uploads
+
+### Quick Test via cURL Scripts
+
+Run all endpoints sequentially against a running local server:
+- **Windows (PowerShell or Command Prompt)**:
+  ```powershell
+  .\curl_samples.bat
+  ```
+- **Linux / macOS**:
+  ```bash
+  chmod +x curl_samples.sh
+  ./curl_samples.sh
+  ```
 
 ---
 
