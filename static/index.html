@@ -3,147 +3,423 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Powered Amount Detection in Medical Documents | Plum SDE Assignment</title>
-  <meta name="description" content="AI-Powered Amount Detection in Medical Documents: OCR, Numeric Normalization, Context Classification, and Provenance Extraction.">
+  <title>Plum &bull; AI Medical Bill Analyzer</title>
+  <meta name="description" content="AI-Powered Medical Bill Analyzer. Automatically extract, verify, and organize financial amounts from medical bills and receipts.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand-badge">
-        <span class="dot"></span> Plum SDE Intern Assignment &bull; Problem Statement 4
+  <!-- Top Navigation Bar -->
+  <nav class="top-nav">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Plum Health</span>
+          <span class="brand-tag">Document AI</span>
+        </div>
       </div>
-      <h1>AI-Powered Amount Detection</h1>
-      <p class="subtitle">
-        Intelligent extraction of financial amounts from medical bills and receipts with OCR error correction, surrounding context classification, mathematical validation, and provenance tracking.
+      <div class="nav-actions">
+        <span class="nav-badge">
+          <span class="status-dot"></span> System Operational
+        </span>
+        <a href="/docs" target="_blank" rel="noopener noreferrer" class="nav-link-api" id="nav-api-link">
+          Developer API <span>&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Hero Section -->
+    <header class="hero-section">
+      <div class="hero-pill">
+        <span>✨ Powered by Intelligent OCR & Context Classification</span>
+      </div>
+      <h1 class="hero-title">AI-Powered Medical Bill Analyzer</h1>
+      <p class="hero-subtitle">
+        Upload a medical bill or receipt and let AI extract, verify, and organize the important financial amounts.
       </p>
+      <div class="hero-support-line">
+        <span>✓ Works with PDFs, scanned documents, and receipt images</span>
+        <span class="separator">&bull;</span>
+        <span>✓ Automatic OCR error correction</span>
+        <span class="separator">&bull;</span>
+        <span>✓ Mathematical balance verification</span>
+      </div>
     </header>
 
-    <main class="layout-grid">
-      <!-- Input Panel -->
-      <section class="glass-panel">
-        <div class="panel-header">
-          <h2>Input Document</h2>
-          <a href="/docs" target="_blank" style="color: #818cf8; font-size: 0.85rem; text-decoration: none; font-weight: 600;">Swagger Docs &rarr;</a>
-        </div>
-
-        <!-- Presets -->
-        <div class="preset-bar">
-          <div class="preset-title">Test Sample Presets:</div>
-          <div class="preset-buttons">
-            <button class="preset-btn" id="preset-pdf-text">PDF Sample (Text)</button>
-            <button class="preset-btn" id="preset-pdf-ocr">PDF Sample (OCR Noise)</button>
-            <button class="preset-btn" id="preset-hospital">Hospital Bill</button>
-            <button class="preset-btn" id="preset-guardrail">Noisy Guardrail</button>
+    <!-- Main Workspace Grid -->
+    <main class="workspace-grid">
+      <!-- LEFT COLUMN: Document & Input Area -->
+      <section class="card input-card">
+        <div class="card-header">
+          <div class="header-info">
+            <h2 class="card-title">Upload your medical bill</h2>
+            <p class="card-desc">Select an image receipt or paste bill text to begin analysis</p>
+          </div>
+          <!-- Input Mode Switcher -->
+          <div class="mode-switch">
+            <button class="mode-btn active" id="btn-mode-upload" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload File
+            </button>
+            <button class="mode-btn" id="btn-mode-text" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="17" y1="18" x2="3" y2="18"></line>
+              </svg>
+              Paste Text
+            </button>
           </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tab-container">
-          <button class="tab-btn active" id="tab-text">Typed Text</button>
-          <button class="tab-btn" id="tab-image">Receipt Image (OCR)</button>
-        </div>
-
-        <div class="input-area">
-          <!-- Text Input View -->
-          <div id="text-input-view">
-            <textarea id="bill-text" placeholder="Enter or paste medical bill text here... e.g. Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%">Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%</textarea>
-          </div>
-
-          <!-- Image Upload View -->
-          <div id="image-input-view" style="display: none;">
-            <div class="drop-zone" id="drop-zone">
-              <div class="drop-zone-icon">&#128206;</div>
-              <p><strong>Click to browse</strong> or drag & drop bill image</p>
-              <p style="font-size: 0.75rem; margin-top: 0.3rem;">Supports PNG, JPG, JPEG (scanned or photo)</p>
-              <input type="file" id="file-input" accept="image/*" style="display: none;">
+        <!-- Mode 1: File Upload View -->
+        <div id="view-upload" class="input-view-container">
+          <!-- Drop Zone -->
+          <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Upload document">
+            <div class="drop-icon-container">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
             </div>
-            <div id="file-info" class="file-preview" style="display: none;">
-              <span id="file-name" style="font-size: 0.85rem; color: #cbd5e1;"></span>
-              <button id="clear-file" style="margin-left: auto; background: none; border: none; color: #ef4444; cursor: pointer;">Remove</button>
-            </div>
+            <p class="drop-main-text"><strong>Drag &amp; drop your file here</strong></p>
+            <p class="drop-or-text">or</p>
+            <button type="button" class="btn-browse" id="btn-browse">Choose File</button>
+            <p class="drop-formats">Supports PDF, JPG, PNG &bull; Scanned bills &amp; camera receipts</p>
+            <input type="file" id="file-input" accept="image/*,application/pdf" style="display: none;">
           </div>
 
-          <button class="action-btn" id="btn-process">
-            <span id="btn-spinner" style="display: none;">&#8987;</span>
-            <span id="btn-text">Execute AI Pipeline</span>
+          <!-- Uploaded File Summary & Preview Box -->
+          <div id="file-preview-card" class="file-preview-card" style="display: none;">
+            <div class="file-preview-meta">
+              <div class="file-icon-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+              </div>
+              <div class="file-info-text">
+                <div class="file-name" id="file-name-display">sample_receipt_clean.png</div>
+                <div class="file-size" id="file-size-display">33.2 KB</div>
+              </div>
+              <button type="button" class="btn-remove-file" id="btn-remove-file" title="Remove file">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Remove
+              </button>
+            </div>
+            <!-- Visual Document Thumbnail -->
+            <div class="document-thumb-container" id="doc-thumb-container">
+              <img id="image-preview" src="" alt="Document preview" style="display: none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode 2: Paste Text View -->
+        <div id="view-text" class="input-view-container" style="display: none;">
+          <label for="bill-text" class="text-label">Document Text / Receipt Transcript:</label>
+          <textarea id="bill-text" class="bill-textarea" placeholder="Enter or paste medical bill text here... e.g. Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%">Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%</textarea>
+          <p class="input-helper">You can type lines with OCR typos (e.g. "T0tal", "l200") to test correction.</p>
+        </div>
+
+        <!-- Presets Section: Try a sample -->
+        <div class="presets-section">
+          <span class="presets-label">Try a sample document:</span>
+          <div class="preset-badges">
+            <button class="preset-badge active" id="preset-pdf-text" type="button">
+              <span>📄</span> Clean PDF
+            </button>
+            <button class="preset-badge" id="preset-pdf-ocr" type="button">
+              <span>🔍</span> Noisy OCR Typos
+            </button>
+            <button class="preset-badge" id="preset-hospital" type="button">
+              <span>🏥</span> Hospital Bill
+            </button>
+            <button class="preset-badge" id="preset-image-sample" type="button">
+              <span>🧾</span> Scanned Receipt
+            </button>
+            <button class="preset-badge" id="preset-guardrail" type="button">
+              <span>⚠️</span> Unreadable Noise
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary Action Button -->
+        <div class="action-container">
+          <button class="btn-primary" id="btn-process" type="button">
+            <span class="btn-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <span class="btn-text" id="btn-text">Analyze Bill</span>
           </button>
         </div>
 
-        <!-- Quick Curl Snippet -->
-        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-          <div class="preset-title">Quick Terminal cURL Command:</div>
-          <div class="code-container">
-            <button class="copy-btn" id="copy-curl-btn">Copy</button>
-            <pre><code id="curl-snippet">curl -X POST "http://localhost:8000/api/v1/process" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%"}'</code></pre>
+        <!-- Multi-Step Progress Indicator -->
+        <div class="progress-box" id="progress-box" style="display: none;">
+          <div class="progress-header">
+            <div class="spinner-pulse"></div>
+            <span class="progress-title">Analyzing your document...</span>
+          </div>
+          <div class="progress-steps">
+            <div class="p-step" id="p-step-1">
+              <span class="p-icon">⏳</span>
+              <span class="p-label">Reading document text &amp; images</span>
+            </div>
+            <div class="p-step" id="p-step-2">
+              <span class="p-icon">⏳</span>
+              <span class="p-label">Cleaning and correcting numbers</span>
+            </div>
+            <div class="p-step" id="p-step-3">
+              <span class="p-icon">⏳</span>
+              <span class="p-label">Understanding amount contexts</span>
+            </div>
+            <div class="p-step" id="p-step-4">
+              <span class="p-icon">⏳</span>
+              <span class="p-label">Verifying balance &amp; mathematical integrity</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Output Pipeline Stages -->
-      <section class="glass-panel">
-        <div class="panel-header">
-          <h2>Pipeline Stages & Provenance</h2>
-          <span id="overall-status" class="badge badge-conf">Ready</span>
+      <!-- RIGHT COLUMN: Extracted Financial Information & Results -->
+      <section class="card results-card" id="results-panel">
+        <!-- Results Header & Status -->
+        <div class="card-header results-header">
+          <div class="status-summary">
+            <div class="status-badge-container">
+              <span id="status-pill" class="status-pill status-pill-success">
+                <span class="pill-dot"></span>
+                <span id="status-pill-text">Analysis Complete</span>
+              </span>
+            </div>
+            <p id="status-subtitle" class="status-subtitle">Your document was successfully analyzed and verified.</p>
+          </div>
+
+          <!-- AI Confidence Gauge -->
+          <div class="confidence-container" id="confidence-container">
+            <div class="confidence-meta">
+              <span class="confidence-label">AI Confidence</span>
+              <span class="confidence-value" id="overall-confidence-val">--%</span>
+            </div>
+            <div class="confidence-bar-bg">
+              <div class="confidence-bar-fill" id="confidence-bar-fill" style="width: 0%;"></div>
+            </div>
+            <span class="confidence-desc" id="confidence-desc">How confident the system is in this result.</span>
+          </div>
         </div>
 
-        <div class="pipeline-steps">
-          <!-- Step 1 Card -->
-          <div class="step-card" id="card-step1">
-            <div class="step-header">
-              <span class="step-title">Step 1: OCR / Text Extraction</span>
-              <span class="badge badge-conf" id="s1-badge">Confidence: --</span>
+        <!-- Guardrail / Error Alert Banner (Hidden by default) -->
+        <div id="guardrail-alert" class="alert-box alert-warning" style="display: none;">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-content">
+            <h3 class="alert-title">We couldn't confidently identify financial amounts</h3>
+            <p class="alert-desc" id="guardrail-reason-text">The uploaded document appears too noisy or lacks legible monetary values. Please check the document or try a clearer image.</p>
+          </div>
+        </div>
+
+        <!-- Bill Summary Section -->
+        <div id="bill-summary-section" class="bill-summary-section">
+          <div class="section-title-row">
+            <h2 class="section-title">Bill Summary</h2>
+            <span class="currency-tag" id="currency-badge">Currency: INR (₹)</span>
+          </div>
+
+          <!-- Primary Metric Cards (Total, Paid, Due) -->
+          <div class="summary-cards-grid" id="summary-cards-container">
+            <!-- Total Bill Card -->
+            <div class="metric-card metric-total">
+              <div class="metric-label">Total Bill</div>
+              <div class="metric-value" id="metric-total-val">₹0</div>
+              <div class="metric-sub" id="metric-total-sub">Overall billed amount</div>
             </div>
-            <div id="s1-content" style="font-size: 0.85rem; color: var(--text-muted);">
-              Run pipeline to extract raw numeric tokens and detect currency.
+
+            <!-- Paid Card -->
+            <div class="metric-card metric-paid">
+              <div class="metric-label">Amount Paid</div>
+              <div class="metric-value" id="metric-paid-val">₹0</div>
+              <div class="metric-sub" id="metric-paid-sub">Settled payments</div>
+            </div>
+
+            <!-- Due Card -->
+            <div class="metric-card metric-due">
+              <div class="metric-label">Amount Due</div>
+              <div class="metric-value" id="metric-due-val">₹0</div>
+              <div class="metric-sub" id="metric-due-sub">Remaining balance</div>
             </div>
           </div>
 
-          <!-- Step 2 Card -->
-          <div class="step-card" id="card-step2">
-            <div class="step-header">
-              <span class="step-title">Step 2: Numeric Normalization</span>
-              <span class="badge badge-conf" id="s2-badge">Confidence: --</span>
-            </div>
-            <div id="s2-content" style="font-size: 0.85rem; color: var(--text-muted);">
-              Corrects OCR digit errors (e.g. l200 &rarr; 1200) and filters percentages.
-            </div>
+          <!-- Secondary Extracted Items (Itemized Fees, Discounts) -->
+          <div id="other-amounts-container" class="other-amounts-container" style="display: none;">
+            <div class="other-title">Additional Extracted Line Items:</div>
+            <div class="other-chips-grid" id="other-chips-grid"></div>
           </div>
 
-          <!-- Step 3 Card -->
-          <div class="step-card" id="card-step3">
-            <div class="step-header">
-              <span class="step-title">Step 3: Context Classification</span>
-              <span class="badge badge-conf" id="s3-badge">Confidence: --</span>
+          <!-- Mathematical Consistency Audit Banner -->
+          <div class="audit-banner" id="audit-banner">
+            <div class="audit-icon" id="audit-icon">✓</div>
+            <div class="audit-text">
+              <span class="audit-title" id="audit-title">Calculations Balanced</span>
+              <span class="audit-equation" id="audit-equation">Total Bill matches Paid + Due</span>
             </div>
-            <div id="s3-content" style="font-size: 0.85rem; color: var(--text-muted);">
-              Labels amounts into categories: total_bill, paid, due.
-            </div>
+            <span class="audit-badge" id="audit-badge">Audited</span>
           </div>
+        </div>
 
-          <!-- Step 4 Card -->
-          <div class="step-card" id="card-step4">
-            <div class="step-header">
-              <span class="step-title">Step 4: Final JSON Output & Provenance</span>
-              <span class="badge badge-conf" id="s4-badge">Status: --</span>
+        <!-- "How the AI analyzed your document" Timeline Section -->
+        <div class="ai-timeline-section" id="ai-timeline-section">
+          <h3 class="timeline-heading">How the AI analyzed your document</h3>
+          <div class="timeline-steps">
+            <!-- Step 1 -->
+            <div class="timeline-item">
+              <div class="step-bullet">1</div>
+              <div class="step-body">
+                <div class="step-row">
+                  <span class="step-name">Read the document</span>
+                  <span class="step-micro-conf" id="t-step1-conf">Conf: 74%</span>
+                </div>
+                <p class="step-explanation">Extracted text and discovered numbers and currency markers.</p>
+              </div>
             </div>
-            <div id="s4-math-container"></div>
-            <div class="code-container">
-              <button class="copy-btn" id="copy-json-btn">Copy JSON</button>
-              <pre><code id="final-json-view">/* Final structured JSON will appear here */</code></pre>
+
+            <!-- Step 2 -->
+            <div class="timeline-item">
+              <div class="step-bullet">2</div>
+              <div class="step-body">
+                <div class="step-row">
+                  <span class="step-name">Cleaned the numbers</span>
+                  <span class="step-micro-conf" id="t-step2-conf">Conf: 82%</span>
+                </div>
+                <p class="step-explanation">Corrected optical character errors (e.g. <code>l200</code> &rarr; <code>1200</code>) and filtered out percentage discount rates.</p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="timeline-item">
+              <div class="step-bullet">3</div>
+              <div class="step-body">
+                <div class="step-row">
+                  <span class="step-name">Understood the context</span>
+                  <span class="step-micro-conf" id="t-step3-conf">Conf: 80%</span>
+                </div>
+                <p class="step-explanation">Analyzed surrounding phrases to categorize each amount as a total bill, payment, or balance due.</p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="timeline-item">
+              <div class="step-bullet">4</div>
+              <div class="step-body">
+                <div class="step-row">
+                  <span class="step-name">Verified the result</span>
+                  <span class="step-micro-conf" id="t-step4-conf">Status: OK</span>
+                </div>
+                <p class="step-explanation">Checked mathematical consistency (Total = Paid + Due) and preserved textual provenance.</p>
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Collapsible Technical Details (For Evaluators, Developers, and Provenance) -->
+        <details class="tech-details-dropdown" id="tech-details-dropdown">
+          <summary class="tech-summary">
+            <span class="tech-summary-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+              View technical details &amp; provenance
+            </span>
+            <span class="tech-tag">Developer &bull; JSON &bull; cURL</span>
+          </summary>
+
+          <div class="tech-content">
+            <!-- Provenance Tracing Table -->
+            <div class="tech-sub-section">
+              <div class="tech-sub-title">Document Provenance Tracing:</div>
+              <div id="provenance-list" class="provenance-list">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+
+            <!-- Raw Extracted Tokens vs Corrected -->
+            <div class="tech-tokens-row">
+              <div class="token-box">
+                <div class="token-box-header">Raw OCR Tokens:</div>
+                <div id="raw-tokens-pills" class="tokens-pill-row"></div>
+              </div>
+              <div class="token-box">
+                <div class="token-box-header">Normalized Clean Amounts:</div>
+                <div id="norm-tokens-pills" class="tokens-pill-row"></div>
+              </div>
+            </div>
+
+            <!-- Full JSON Output View -->
+            <div class="tech-sub-section">
+              <div class="code-header-row">
+                <span class="tech-sub-title">Structured Output JSON:</span>
+                <button class="btn-copy" id="copy-json-btn" type="button">Copy JSON</button>
+              </div>
+              <pre class="code-block"><code id="final-json-view">/* Structured JSON will appear here */</code></pre>
+            </div>
+
+            <!-- Reproducible Terminal cURL Command -->
+            <div class="tech-sub-section">
+              <div class="code-header-row">
+                <span class="tech-sub-title">Terminal cURL Command:</span>
+                <button class="btn-copy" id="copy-curl-btn" type="button">Copy cURL</button>
+              </div>
+              <pre class="code-block"><code id="curl-snippet">curl -X POST "http://localhost:8000/api/v1/process" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Total: INR 1200 | Paid: 1000 | Due: 200 | Discount: 10%"}'</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <!-- Verify Before Use Disclaimer -->
+        <div class="disclaimer-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>AI-generated results should be verified against the original document before being used for payment, reimbursement, or other financial decisions.</span>
         </div>
       </section>
     </main>
 
-    <footer>
-      Plum SDE Internship Technical Assignment &bull; Problem Statement 4 &bull; Built with FastAPI & RapidOCR
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Plum SDE Internship Technical Assignment &bull; Problem Statement 4</span>
+      </div>
+      <div class="footer-right">
+        <a href="/docs" target="_blank" rel="noopener noreferrer">Interactive Swagger API</a>
+        <span class="dot">&bull;</span>
+        <a href="/redoc" target="_blank" rel="noopener noreferrer">ReDoc Specifications</a>
+      </div>
     </footer>
   </div>
 

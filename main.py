@@ -50,6 +50,10 @@ STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 if os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+SAMPLE_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sample_data")
+if os.path.exists(SAMPLE_DATA_DIR):
+    app.mount("/sample_data", StaticFiles(directory=SAMPLE_DATA_DIR), name="sample_data")
+
 
 @app.get("/", include_in_schema=False)
 async def serve_index():
