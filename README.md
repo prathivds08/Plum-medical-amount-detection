@@ -6,7 +6,7 @@
 
 ## 📌 Executive Summary
 
-This repository contains a production-grade backend service that extracts financial amounts from typed or scanned medical bills and receipts (including crumpled, noisy, or degraded inputs). The system handles OCR errors, digit confusions, percentage exclusions, context classification, mathematical consistency validation, and produces structured JSON outputs with exact textual provenance and guardrails.
+This repository contains a production-grade backend service and modern SaaS web application that extracts financial amounts from typed or scanned medical bills and receipts (including crumpled, noisy, or degraded inputs). The system handles OCR errors, digit confusions, percentage exclusions, context classification, mathematical consistency validation, and produces structured JSON outputs with exact textual provenance and guardrails.
 
 ---
 
@@ -186,7 +186,15 @@ python sample_data/generate_samples.py
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 The server will start at:
-- **Interactive Web UI**: [http://localhost:8000/](http://localhost:8000/)
+- **Interactive SaaS Web Application**: [http://localhost:8000/](http://localhost:8000/)
+  - Document drag-and-drop (PDF, PNG, JPG) with live preview thumbnail
+  - One-click sample presets (`Clean PDF`, `Noisy OCR Typos`, `Hospital Bill`, `Scanned Receipt`, `Unreadable Noise`)
+  - Multi-step progress animation explaining OCR and classification in real time
+  - Prominent Bill Summary cards (Total Bill, Amount Paid, Amount Due) with currency formatting
+  - Plain-English mathematical audit banner (`Total == Paid + Due`)
+  - AI Confidence meter with advisory microcopy
+  - Non-technical 4-step analysis timeline
+  - Collapsible developer accordion with exact document provenance tracing and formatted JSON
 - **Interactive Swagger API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
@@ -295,15 +303,20 @@ Import `postman_collection.json` into Postman to test all endpoints out-of-the-b
 ## 🎥 Screen Recording Demo Script
 
 When recording your 2-3 minute demo video for submission:
-1. **Introduction (15s)**: Briefly introduce Problem Statement 4 (AI-Powered Amount Detection in Medical Documents).
-2. **Interactive UI Demo (45s)**:
+1. **Introduction (15s)**:
+   - Briefly introduce Problem Statement 4 (AI-Powered Amount Detection in Medical Documents).
+   - Highlight the end-to-end architecture: OCR &rarr; Numeric Normalization &rarr; Context Classification &rarr; Mathematical Audit &rarr; Provenance.
+2. **Interactive SaaS UI Demo (60s)**:
    - Open `http://localhost:8000`.
-   - Click **"PDF Sample (Text)"** preset &rarr; hit **Execute AI Pipeline** &rarr; point out Step 1 raw tokens, Step 2 normalized amounts, Step 3 classification, and Step 4 final JSON with provenance.
-   - Click **"PDF Sample (OCR Noise)"** preset &rarr; demonstrate `l200` corrected to `1200` and `T0tal`/`Pald` classified correctly.
-   - Click **"Noisy Guardrail"** preset &rarr; show graceful exit `status: "no_amounts_found"`, `reason: "document too noisy"`.
-   - Switch to **"Receipt Image (OCR)"** tab &rarr; upload `sample_data/sample_receipt_clean.png` &rarr; show live OCR extraction and processing.
-3. **Swagger API / Terminal Demo (30s)**:
-   - Switch to `http://localhost:8000/docs` or run `./curl_samples.sh` / `curl_samples.bat`.
-4. **Codebase & Tests (30s)**:
-   - Show `pytest -v` passing all 17 unit and integration tests.
-   - Highlight modular code organization under `services/`.
+   - Point out the clean consumer-grade layout (Document Input on the left, Bill Summary & Analysis on the right).
+   - Click **"Clean PDF"** preset &rarr; click **"Analyze Bill"** &rarr; point out the 4-step progress animation, the high AI Confidence, the prominent cards (**Total Bill: ₹1,200**, **Amount Paid: ₹1,000**, **Amount Due: ₹200**), and the balanced mathematical audit banner.
+   - Click **"Noisy OCR Typos"** preset &rarr; hit **"Analyze Bill"** &rarr; show how `l200` is corrected to `1200` and `T0tal`/`Pald` are classified accurately.
+   - Click **"Hospital Bill"** preset &rarr; show how additional itemized fees (*Consultation Fee*, *Medicines*, *Lab Work*) are cleanly extracted into secondary chips.
+   - Click **"Scanned Receipt"** preset &rarr; show the live document image preview and OCR processing in action.
+   - Click **"Unreadable Noise"** preset &rarr; demonstrate the friendly guardrail exit condition: *"We couldn't confidently identify financial amounts (reason: document too noisy)"*.
+   - Expand **"View technical details & provenance"** &rarr; show evaluators the exact document provenance tracing strings (`text: 'Total: INR 1200'`), raw vs. normalized tokens, and the assignment-compliant JSON output with 1-click copy.
+3. **Swagger API / Terminal Demo (20s)**:
+   - Show `http://localhost:8000/docs` or run `./curl_samples.sh` / `.\curl_samples.bat`.
+4. **Codebase & Tests (25s)**:
+   - Run `pytest -v` in the terminal to show all 17 unit and integration tests passing in ~2.5 seconds.
+   - Briefly highlight the modular architecture under `services/` (`ocr_engine.py`, `normalizer.py`, `classifier.py`, `provenance.py`).
