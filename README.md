@@ -1,5 +1,5 @@
 # AI-Powered Amount Detection in Medical Documents
-> **Plum SDE Internship Technical Assignment &bull; Problem Statement 4**
+> **Plum Internship Technical Assignment &bull; Problem Statement 4**
 > Focus Area: OCR &rarr; Numeric Normalization &rarr; Context Classification &rarr; Provenance Extraction
 
 ---
